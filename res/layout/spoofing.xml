@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+android:id="@+id/widget35"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+xmlns:android="http://schemas.android.com/apk/res/android"
+>
+<TextView
+android:id="@+id/targetText"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Spoofing: "
+android:textSize="28sp"
+android:layout_alignParentTop="true"
+android:layout_centerHorizontal="true"
+>
+</TextView>
+<Button
+android:id="@+id/stop"
+android:layout_width="160px"
+android:layout_height="80px"
+android:text="Stop spoofing"
+android:layout_alignParentBottom="true"
+android:layout_centerHorizontal="true"
+>
+</Button>
+<CheckBox
+android:id="@+id/forward_ipv6"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Forward ipv6 traffic"
+android:layout_centerVertical="true"
+android:layout_centerHorizontal="true"
+>
+</CheckBox>
+<CheckBox
+android:id="@+id/forward_ipv4"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Forward ipv4 traffic"
+android:layout_above="@+id/forward_ipv6"
+android:layout_centerHorizontal="true"
+>
+</CheckBox>
+</RelativeLayout>

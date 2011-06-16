@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+android:id="@+id/widget28"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+xmlns:android="http://schemas.android.com/apk/res/android"
+>
+<Button
+android:id="@+id/start"
+android:layout_width="174px"
+android:layout_height="97px"
+android:text="Begin spoofing"
+android:layout_alignParentBottom="true"
+android:layout_centerHorizontal="true"
+>
+</Button>
+<TextView
+android:id="@+id/widget33"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Host IP address(optional):"
+android:textSize="22sp"
+android:layout_alignParentTop="true"
+android:layout_alignParentLeft="true"
+>
+</TextView>
+<EditText
+android:id="@+id/gateway"
+android:contentDescription="Enter the ip address you want to spoof here"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:textSize="18sp"
+android:layout_below="@+id/widget33"
+android:layout_alignParentLeft="true"
+>
+</EditText>
+<TextView
+android:id="@+id/infotv"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="@string/howTo"
+android:textSize="18sp"
+android:layout_centerVertical="true"
+android:layout_centerHorizontal="true"
+>
+</TextView>
+</RelativeLayout>

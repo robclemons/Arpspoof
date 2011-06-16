@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rootError">An error was encountered while attempting to run as root.  Arpspoof requires root.</string>
+    <string name="copyExeTitle">Copy executable for use with terminal</string>
+    <string name="howTo">Enter the IP address of the host you wish to impersonate and press "Begin Spoofing".  If you do not enter an IP address then Arpspoof will attempt to spoof the network\'s gateway.</string>
+    <string name="app_name">Arpspoof</string>
+</resources>

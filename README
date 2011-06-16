@@ -1,0 +1,32 @@
+                                            Arpspoof
+                                                                    
+    This project is a port of Weiming Lai's Next Generation Arpspoof(the original Arpspoof 
+was written by Dug Song) to Android.
+
+Arpspoof redirects traffic on the local network by forging ARP replies and sending them to 
+either a specific target or all the hosts on the local network.  Be sure to have IP forwarding
+enabled or use an application that will forward the traffic, otherwise the targets will suffer a DOS.
+
+Arpspoof can be installed two different ways.  The binary compiled from the C code can be used 
+by itself from a terminal emulator or you can build the apk and install that on the device.
+
+                                      Compiling the C code
+                                                                    
+dependencies:
+    - libpcap 
+    - libnet
+    
+building:
+    First you'll need to have the NDK installed.  http://developer.android.com/sdk/ndk/index.html
+    cd into Arpspoof's jni directory and run ndk-build.
+    (optional)run "ndk-build clean" to clean up all the files you no longer need.
+
+installing just the binary:
+    copy the binary you've just created over to the Android device at a convenient location(ie /data/local/bin/)
+    execute the binary from a terminal emulator as root
+    
+    
+                                      Building the apk
+
+Place the binary you created named arpspoof into the project's res/raw/ directory.
+Then build the apk just like you would any other Android app.
