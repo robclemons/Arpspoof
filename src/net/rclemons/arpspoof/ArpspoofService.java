@@ -25,6 +25,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.util.Log;
@@ -35,8 +36,8 @@ public class ArpspoofService extends IntentService {
 	private static final String TAG = "ArpspoofService";
 	private static final int SHOW_SPOOFING = 1;
 	private volatile Thread myThread;
-	private static volatile WifiLock wifiLock;
-
+	private static volatile WifiManager.WifiLock wifiLock;
+	private static volatile PowerManager.WakeLock wakeLock;
 	public ArpspoofService() {
 		super("ArpspoofService");
 	}
@@ -54,10 +55,12 @@ public class ArpspoofService extends IntentService {
 		notification.setLatestEventInfo(this, "spoofing: " + gateway,
 				"tap to open Arpspoof", pendingIntent);
 		startForeground(SHOW_SPOOFING, notification);
-		WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-		wifiLock = manager.createWifiLock(WifiManager.WIFI_MODE_FULL, "wifiLock");
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		wifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, "wifiLock");
+		wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "wakeLock");
 		wifiLock.acquire();
-
+		wakeLock.acquire();
 		try {
 			myThread = new ExecuteCommand(command);
 		} catch (IOException e) {
@@ -73,6 +76,7 @@ public class ArpspoofService extends IntentService {
 		if(myThread != null)
 			myThread = null;
 		wifiLock.release();
+		wakeLock.release();
 		stopForeground(true);
 		SpoofingActivity.isSpoofing = false;
 	}
