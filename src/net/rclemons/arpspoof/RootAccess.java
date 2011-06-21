@@ -63,7 +63,8 @@ class RootAccess {
 			} catch (IOException e) {
 				// swallow error
 			} finally {
-				process.destroy();
+				if (process != null)
+					process.destroy();
 			}
 		}
 		return hasRoot;

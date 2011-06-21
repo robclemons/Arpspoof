@@ -27,7 +27,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.net.wifi.WifiManager;
-import android.net.wifi.WifiManager.WifiLock;
 import android.util.Log;
 
 public class ArpspoofService extends IntentService {
