@@ -198,7 +198,7 @@ public class Arpspoof extends Activity {
 				}
 			}
 			try {
-				ExecuteCommand ec = new ExecuteCommand("chmod +x " + getFileStreamPath(fileName));
+				ExecuteCommand ec = new ExecuteCommand("chmod +x " + getFileStreamPath(fileName).toString());
 				ec.start();
 				ec.join();
 			} catch (IOException e) {

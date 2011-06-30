@@ -68,16 +68,23 @@ class ExecuteCommand extends Thread
 			public void run() {
 				try {
 					String line = null;
-					while ((line = buffReader.readLine()) != null) {
-						if(outputLV != null) {
-							final String tmpLine = new String(line);
-							outputLV.post(new Runnable() {
-								public void run() {
-									outputAdapter.add(tmpLine);
-									if(outputAdapter.getCount() > NUM_ITEMS)
-										outputAdapter.remove(outputAdapter.getItem(0));
-								}
-							});
+					if(outputLV == null) {
+						 char[] buffer = new char[4096];
+						 while (buffReader.read(buffer) > 0) {
+						 }
+					}
+					else {
+						while ((line = buffReader.readLine()) != null) {
+							if(outputLV != null) {
+								final String tmpLine = new String(line);
+								outputLV.post(new Runnable() {
+									public void run() {
+										outputAdapter.add(tmpLine);
+										if(outputAdapter.getCount() > NUM_ITEMS)
+											outputAdapter.remove(outputAdapter.getItem(0));
+									}
+								});
+							}
 						}
 					}
 				} catch (IOException e) {
