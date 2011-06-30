@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 class ExecuteCommand extends Thread
 {
@@ -32,6 +34,10 @@ class ExecuteCommand extends Thread
 	private final BufferedReader reader;
 	private final BufferedReader errorReader;
 	private final DataOutputStream os;
+	private ListView outputLV = null;
+	private ArrayAdapter<String> outputAdapter = null;
+	private static final int NUM_ITEMS = 5;
+
 
 	public ExecuteCommand(String cmd) throws IOException {
 		command = cmd;
@@ -39,6 +45,12 @@ class ExecuteCommand extends Thread
 		reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 		os = new DataOutputStream(process.getOutputStream());
+	}
+	
+	public ExecuteCommand(String cmd, ListView lv, ArrayAdapter<String> aa) throws IOException {
+		this(cmd);
+		outputLV = lv;
+		outputAdapter = aa;
 	}
 
 	public void run() {
@@ -54,10 +66,19 @@ class ExecuteCommand extends Thread
 			}
 
 			public void run() {
-				char[] buffer = new char[4096];
 				try {
-					while (buffReader.read(buffer) > 0) {
-						/* TODO log stream */
+					String line = null;
+					while ((line = buffReader.readLine()) != null) {
+						if(outputLV != null) {
+							final String tmpLine = new String(line);
+							outputLV.post(new Runnable() {
+								public void run() {
+									outputAdapter.add(tmpLine);
+									if(outputAdapter.getCount() > NUM_ITEMS)
+										outputAdapter.remove(outputAdapter.getItem(0));
+								}
+							});
+						}
 					}
 				} catch (IOException e) {
 					Log.w(TAG, "StreamGobbler couldn't read stream", e);

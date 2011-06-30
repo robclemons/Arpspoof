@@ -24,15 +24,20 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.content.Context;
 import android.content.Intent;
 
 public class SpoofingActivity extends Activity {
@@ -41,6 +46,8 @@ public class SpoofingActivity extends Activity {
 	protected static volatile boolean isSpoofing = false;
 	private final String IPV4_FILEPATH = "/proc/sys/net/ipv4/ip_forward";
 	private final String IPV6_FILEPATH = "/proc/sys/net/ipv6/conf/all/forwarding";
+	private static ExecuteCommand tcpdumpCmd;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -93,6 +100,7 @@ public class SpoofingActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(v.getContext(), ArpspoofService.class);
 				stopService(intent);
+				stopTcpdump();
 				finish();
 			}
 		});        
@@ -106,10 +114,41 @@ public class SpoofingActivity extends Activity {
 			intent.putExtras(mBundle);
 			startService(intent);
 			isSpoofing = true;
+			startTcpdump();
 		}
 	}
 
+	private void startTcpdump() {
+		final ListView outputLV = (ListView) findViewById(R.id.OutputLV);
+		WifiManager wManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		String localhost = Formatter.formatIpAddress(wManager.getConnectionInfo().getIpAddress());
+		ArrayAdapter<String> outputAdapter = new ArrayAdapter<String>(this, R.layout.list_item);
+		outputLV.setAdapter(outputAdapter);
+		try {
+			tcpdumpCmd = new ExecuteCommand(getFileStreamPath(Arpspoof.TCPDUMP).toString() + " not '(src host "
+					+ localhost + " or dst host " + localhost + " or arp)'", outputLV, outputAdapter);
+		} catch (IOException e) {
+			Log.e(TAG, "error running tcpdump", e);
+		}
+		tcpdumpCmd.start();
+	}
 
+	private void stopTcpdump() {
+		if(tcpdumpCmd != null) {
+			tcpdumpCmd.interrupt();
+			tcpdumpCmd = null;
+			try {
+				ExecuteCommand ec = new ExecuteCommand("killall " + Arpspoof.TCPDUMP);
+				ec.start();
+				ec.join();
+			} catch (IOException e) {
+				Log.e(TAG, "error killing tcpdump", e);
+			} catch (InterruptedException e) {
+				// swallow error
+			}
+		}
+	}
+	
 	private boolean isForwarding(String filePath) {
 		boolean forwarding = false;
 		BufferedReader br;

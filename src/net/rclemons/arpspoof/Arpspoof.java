@@ -55,6 +55,7 @@ public class Arpspoof extends Activity {
 	private static final String TAG = "Arpspoof.main";
 	private static final String FILENAME = "arpspoof";
 	private static final String BINPATH = "/data/local/bin/";
+	public static final String TCPDUMP = "arpspoof_tcpdump";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -63,8 +64,12 @@ public class Arpspoof extends Activity {
 
 		File localBin = getFileStreamPath(FILENAME);
 		if(localBin.exists() == false)
-			extractBinary();			
+			extractBinary(R.raw.arpspoof, FILENAME);			
 
+		File localTcpdump = getFileStreamPath(TCPDUMP);
+		if(localTcpdump.exists() == false)
+			extractBinary(R.raw.arpspoof_tcpdump, TCPDUMP);
+		
 		/*Implements the Begin Spoofing button*/
 		final Button startButton = (Button) findViewById(R.id.start);
 		startButton.setOnClickListener(new OnClickListener() {
@@ -167,20 +172,20 @@ public class Arpspoof extends Activity {
 		return dialog;
 	}
 
-	private void extractBinary() {
+	private void extractBinary(int id, String fileName) {
 		/*extracts the binary from the apk and makes it executable.  
 		 * If any step fails and the function continues to run everything should be cleaned up*/
 		if(RootAccess.isGranted()) {
-			final InputStream arpBin = getResources().openRawResource(R.raw.arpspoof);
+			final InputStream arpBin = getResources().openRawResource(id);
 			FileOutputStream out = null;
 			boolean success = true;
 			final byte[] buff = new byte[BUFFER_SIZE];
 			try {
-				out = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+				out = openFileOutput(fileName, Context.MODE_PRIVATE);
 				while(arpBin.read(buff) > 0)
 					out.write(buff);
 			} catch (FileNotFoundException e) {
-				Log.e(TAG, FILENAME + "wasn't found", e);
+				Log.e(TAG, fileName + "wasn't found", e);
 				success = false;
 			} catch (IOException e) {
 				Log.e(TAG, "couldn't extract executable", e);
@@ -193,7 +198,7 @@ public class Arpspoof extends Activity {
 				}
 			}
 			try {
-				ExecuteCommand ec = new ExecuteCommand("chmod +x " + getFileStreamPath(FILENAME));
+				ExecuteCommand ec = new ExecuteCommand("chmod +x " + getFileStreamPath(fileName));
 				ec.start();
 				ec.join();
 			} catch (IOException e) {
@@ -204,7 +209,7 @@ public class Arpspoof extends Activity {
 				success = false;
 			} finally {
 				if(!success)
-					getFileStreamPath(FILENAME).delete();
+					getFileStreamPath(fileName).delete();
 			}
 		} else
 			showDialog(UNROOTED_ALERT);
