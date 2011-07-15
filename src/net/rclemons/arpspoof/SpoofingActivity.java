@@ -59,7 +59,12 @@ public class SpoofingActivity extends Activity {
 
 		//ipv4 checkbox
 		final CheckBox ipv4_cb = (CheckBox) findViewById(R.id.forward_ipv4);
-		ipv4_cb.setChecked(isForwarding(IPV4_FILEPATH));
+		try {
+			ipv4_cb.setChecked(isForwarding(IPV4_FILEPATH));
+		} catch (FileNotFoundException e) {
+			Log.w(TAG, "couldn't find network forwarding file", e);
+			ipv4_cb.setEnabled(false);
+		}
 		ipv4_cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton bv, boolean checked) {
 				try {
@@ -78,7 +83,12 @@ public class SpoofingActivity extends Activity {
 
 		//ipv6 checkbox
 		final CheckBox ipv6_cb = (CheckBox) findViewById(R.id.forward_ipv6);
-		ipv6_cb.setChecked(isForwarding(IPV6_FILEPATH));
+		try {
+			ipv6_cb.setChecked(isForwarding(IPV6_FILEPATH));
+		} catch (FileNotFoundException e) {
+			Log.w(TAG, "couldn't find network forwarding file", e);
+			ipv6_cb.setEnabled(false);
+		}
 		ipv6_cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton bv, boolean checked) {
 				try {
@@ -149,7 +159,7 @@ public class SpoofingActivity extends Activity {
 		}
 	}
 	
-	private boolean isForwarding(String filePath) {
+	private boolean isForwarding(String filePath) throws FileNotFoundException {
 		boolean forwarding = false;
 		BufferedReader br;
 		try {
@@ -159,8 +169,6 @@ public class SpoofingActivity extends Activity {
 			if(buff[0] == '1')
 				forwarding = true;
 			br.close();
-		} catch (FileNotFoundException e) {
-			Log.e(TAG, "couldn't find network forwarding file", e);
 		} catch (IOException e) {
 			Log.w(TAG, "error reading forwarding file", e);
 		}

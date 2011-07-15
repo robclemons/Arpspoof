@@ -52,6 +52,7 @@ public class Arpspoof extends Activity {
 	private static final int WAIT = 1000;
 	private static final int UNROOTED_ALERT = 0;
 	private static final int LICENSE_ALERT = 1;
+	private static final int INSTALLED_ALERT = 2;
 	private static final String TAG = "Arpspoof.main";
 	private static final String FILENAME = "arpspoof";
 	private static final String BINPATH = "/data/local/bin/";
@@ -142,6 +143,15 @@ public class Arpspoof extends Activity {
 			});
 			dialog = builder.create();
 			break;
+		case INSTALLED_ALERT:
+			builder.setMessage(R.string.successfulInstall);
+			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			dialog = builder.create();
+			break;
 		case LICENSE_ALERT:
 			final InputStream licenseIS = getResources().openRawResource(R.raw.copying);
 			final BufferedReader licenseBR = new BufferedReader(new InputStreamReader(licenseIS));
@@ -198,7 +208,7 @@ public class Arpspoof extends Activity {
 				}
 			}
 			try {
-				ExecuteCommand ec = new ExecuteCommand("chmod +x " + getFileStreamPath(fileName).toString());
+				ExecuteCommand ec = new ExecuteCommand("chmod 770 " + getFileStreamPath(fileName).toString());
 				ec.start();
 				ec.join();
 			} catch (IOException e) {
@@ -221,7 +231,7 @@ public class Arpspoof extends Activity {
 		String command = new String();
 		command += "mkdir " + BINPATH + ';';
 		command += "cp " + getFileStreamPath(FILENAME) + " " + BINPATH + FILENAME + ';';
-		command += "chmod +x " + BINPATH + FILENAME;
+		command += "chmod 771 " + BINPATH + FILENAME;
 		if(RootAccess.isGranted()) {
 			try {
 				ExecuteCommand ec = new ExecuteCommand(command);
@@ -232,6 +242,7 @@ public class Arpspoof extends Activity {
 			} catch (InterruptedException e) {
 				Log.i(TAG, "thread running install commands was interrupted");
 			}
+			showDialog(INSTALLED_ALERT);
 		} else
 			showDialog(UNROOTED_ALERT);
 	}   

@@ -43,9 +43,10 @@ public final class R {
         public static final int copying=0x7f040002;
     }
     public static final class string {
-        public static final int app_name=0x7f050003;
-        public static final int copyExeTitle=0x7f050001;
-        public static final int howTo=0x7f050002;
+        public static final int app_name=0x7f050004;
+        public static final int copyExeTitle=0x7f050002;
+        public static final int howTo=0x7f050003;
         public static final int rootError=0x7f050000;
+        public static final int successfulInstall=0x7f050001;
     }
 }
