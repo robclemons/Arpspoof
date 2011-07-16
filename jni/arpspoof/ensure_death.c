@@ -15,13 +15,16 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
-#include "ensure_death.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
 
 void *blocking_input()
 {
     char string[10];
     fgets(string, 8, stdin);
-    exit(1);
+    raise(SIGINT);
 
 } 
 

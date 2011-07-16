@@ -1,13 +1,15 @@
 /*
-  arp.c
+ * arp.c
+ *
+ * ARP cache routines.
+ * 
+ * Copyright (c) 1999 Dug Song <dugsong@monkey.org>
+ *
+ * $Id: arp.c,v 1.8 2001/03/15 08:32:58 dugsong Exp $
+ */
+//Modified by Robbie Clemons <robclemons@gmail.com> 7/16/2011 for Android
 
-  ARP cache routines.
-  
-  Copyright (c) 1999 Dug Song <dugsong@monkey.org>
-
-  $Id: arp.c,v 1.1.1.1 2005/03/06 00:38:57 weiming_lai Exp $
-*/
-//Modified by Robbie Clemons <robclemons@gmail.com> 5/23/2011
+#include "config.h"
 
 #include <sys/types.h>
 #include <sys/param.h>
@@ -29,13 +31,16 @@
 #include <netinet/in_systm.h>
 #include <netinet/in.h>
 #include <netinet/if_ether.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "droid.h"//Added by Robbie Clemons to add declarations missing from Android's header files
+
+#include <libnet.h>//added for Android
+#include <droid.h>//added for Android
+#include "arp.h"
 
 #ifdef BSD
-
 int
 arp_cache_lookup(in_addr_t ip, struct ether_addr *ether)
 {
@@ -117,5 +122,3 @@ arp_cache_lookup(in_addr_t ip, struct ether_addr *ether)
 }
 
 #endif /* !BSD */
-
-/* 5000 */

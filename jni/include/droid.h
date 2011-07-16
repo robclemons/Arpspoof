@@ -4,7 +4,7 @@
 #define _DROID_H_
 
 //from ubuntu's netinet/in.h
-typedef uint32_t in_addr_t;
+//typedef uint32_t in_addr_t;
 
 //from ubuntu's net/ethernet.h
 struct ether_addr

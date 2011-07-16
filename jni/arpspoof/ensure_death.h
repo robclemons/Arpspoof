@@ -18,10 +18,6 @@
 #ifndef ENSURE_DEATH_H
 #define ENSURE_DEATH_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-
 void ensure_death();
 
 #endif
