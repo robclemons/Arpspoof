@@ -25,6 +25,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.NetworkInterface;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -79,18 +83,34 @@ public class Arpspoof extends Activity {
 				WifiInfo wInfo = wManager.getConnectionInfo();
 
 				//Check to see if we're connected to wifi
-				if( wInfo.getIpAddress() != 0) {
+				int localhost = wInfo.getIpAddress();
+				if(localhost != 0) {
 					final EditText gateway = (EditText) findViewById(R.id.gateway);
-					String ipAddress = gateway.getText().toString();
+					String gatewayIP = gateway.getText().toString();
+					String localhostIP = Formatter.formatIpAddress(localhost);
 					//If nothing was entered for the ip address use the gateway
-					if(ipAddress.trim().equals(""))
-						ipAddress = Formatter.formatIpAddress(wManager.getDhcpInfo().gateway);
-
+					if(gatewayIP.trim().equals(""))
+						gatewayIP = Formatter.formatIpAddress(wManager.getDhcpInfo().gateway);
+					
+					//determining wifi network interface
+					InetAddress localInet;
+					String interfaceName = null;
+					try {
+						localInet = InetAddress.getByName(localhostIP);
+						NetworkInterface wifiInterface = NetworkInterface.getByInetAddress(localInet);
+						interfaceName = wifiInterface.getDisplayName();
+					} catch (UnknownHostException e) {
+						Log.e(TAG, "error getting localhost's InetAddress", e);
+					} catch (SocketException e) {
+						Log.e(TAG, "error getting wifi network interface", e);
+					}
+					
 					Intent intent = new Intent(v.getContext(), SpoofingActivity.class);
 					//Add data necessary for running the program
 					Bundle mBundle = new Bundle();
-					mBundle.putString("gateway", ipAddress);
+					mBundle.putString("gateway", gatewayIP);
 					mBundle.putString("localBin", getFileStreamPath(FILENAME).toString());
+					mBundle.putString("interface", interfaceName);
 					intent.putExtras(mBundle);
 					if(RootAccess.isGranted())
 						startActivity(intent);
