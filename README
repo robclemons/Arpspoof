@@ -1,7 +1,6 @@
                                             Arpspoof
                                                                     
-    This project is a port of Weiming Lai's Next Generation Arpspoof(the original Arpspoof 
-was written by Dug Song) to Android.
+    This project is a port of Dug Song's arpspoof(http://monkey.org/~dugsong/dsniff/) to Android.
 
 Arpspoof redirects traffic on the local network by forging ARP replies and sending them to 
 either a specific target or all the hosts on the local network.  Be sure to have IP forwarding
