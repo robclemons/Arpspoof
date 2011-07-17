@@ -45,6 +45,8 @@ import android.widget.Toast;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.format.Formatter;
@@ -67,13 +69,30 @@ public class Arpspoof extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		/*make sure we're using the latest binary versions*/
+		SharedPreferences settings = getPreferences(MODE_PRIVATE);
+		String binVersionSetting = "binVersion";
+		int localBinVersion = settings.getInt(binVersionSetting, 0);
+		int currentVersion;
+		try {
+			currentVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e) {
+			Log.w(TAG, "couldn't find this app's package name(really weird)", e);
+			currentVersion = 0;//if something goes wrong assume it's an old version
+		}
+		
 		File localBin = getFileStreamPath(FILENAME);
-		if(localBin.exists() == false)
+		File localTcpdump = getFileStreamPath(TCPDUMP);	
+		if(localBin.exists() == false || localBinVersion < currentVersion)
 			extractBinary(R.raw.arpspoof, FILENAME);			
-
-		File localTcpdump = getFileStreamPath(TCPDUMP);
-		if(localTcpdump.exists() == false)
+		if(localTcpdump.exists() == false || localBinVersion < currentVersion)
 			extractBinary(R.raw.arpspoof_tcpdump, TCPDUMP);
+		if(localBinVersion < currentVersion) {
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putInt(binVersionSetting, currentVersion);
+			if(editor.commit() != true)
+				Log.w(TAG, "failed to commit version setting");
+		}
 		
 		/*Implements the Begin Spoofing button*/
 		final Button startButton = (Button) findViewById(R.id.start);
@@ -147,7 +166,7 @@ public class Arpspoof extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
+	
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog dialog;
