@@ -83,11 +83,21 @@ public class ArpspoofService extends IntentService {
 
 	@Override
 	public void onDestroy() {
-		//at the suggestion of the internet
+		Thread killAll;
+		try {
+			killAll = new ExecuteCommand("killall arpspoof");
+			killAll.setDaemon(true);
+			killAll.start();
+			killAll.join();
+		} catch (IOException e) {
+			Log.w(TAG, "error initializing killall arpspoof command", e);
+		} catch (InterruptedException e) {
+			// don't care
+		}
+		
 		if(myThread != null) {
-			Thread tmpThread = myThread;
+			myThread.interrupt();
 			myThread = null;
-			tmpThread.interrupt();
 		}
 	}
 }

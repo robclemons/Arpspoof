@@ -30,10 +30,10 @@ class ExecuteCommand extends Thread
 {
 	private static final String TAG = "ExecuteCommand";
 	private final String command;
-	private final Process process;
-	private final BufferedReader reader;
-	private final BufferedReader errorReader;
-	private final DataOutputStream os;
+	private Process process = null;
+	private BufferedReader reader = null;
+	private BufferedReader errorReader = null;
+	private DataOutputStream os = null;
 	private ListView outputLV = null;
 	private ArrayAdapter<String> outputAdapter = null;
 	private static final int NUM_ITEMS = 5;
@@ -55,12 +55,12 @@ class ExecuteCommand extends Thread
 
 	public void run() {
 
-		class StreamGobler extends Thread {
+		class StreamGobbler extends Thread {
 			/*"gobblers" seem to be the recommended way to ensure the streams don't cause issues */
 
-			public BufferedReader buffReader;
+			public BufferedReader buffReader = null;
 
-			public StreamGobler(BufferedReader br) {
+			public StreamGobbler(BufferedReader br) {
 				buffReader = br;
 
 			}
@@ -91,7 +91,10 @@ class ExecuteCommand extends Thread
 					Log.w(TAG, "StreamGobbler couldn't read stream", e);
 				} finally {
 					try {
-						buffReader.close();
+						if(buffReader != null) {
+							buffReader.close();
+							buffReader = null;
+						}
 					} catch (IOException e) {
 						//swallow error
 					}
@@ -102,11 +105,11 @@ class ExecuteCommand extends Thread
 		try {
 			os.writeBytes(command + '\n');
 			os.flush();
-			StreamGobler errorGobler = new StreamGobler(errorReader);
-			StreamGobler stdOutGobbler = new StreamGobler(reader);
-			errorGobler.setDaemon(true);
+			StreamGobbler errorGobbler = new StreamGobbler(errorReader);
+			StreamGobbler stdOutGobbler = new StreamGobbler(reader);
+			errorGobbler.setDaemon(true);
 			stdOutGobbler.setDaemon(true);
-			errorGobler.start();
+			errorGobbler.start();
 			stdOutGobbler.start();
 			os.writeBytes("exit\n");
 			os.flush();
@@ -116,7 +119,7 @@ class ExecuteCommand extends Thread
 					process.exitValue();
 					Thread.currentThread().interrupt();
 				} catch (IllegalThreadStateException e) {
-					//just sleep, the process hasn't terminated yet but sleep should(but doesn't) cause InterruptedException to be thrown if interrupt() has been called
+					//the process hasn't terminated yet so sleep some, then check again
 					Thread.sleep(250);//.25 seconds seems reasonable
 				}
 			}
@@ -124,16 +127,31 @@ class ExecuteCommand extends Thread
 			Log.e(TAG, "error running commands", e);
 		} catch (InterruptedException e) {
 			try {
-				os.close();//key to killing executable and process
-				reader.close();
-				errorReader.close();
+				if(os != null) {
+					os.close();//key to killing executable and process
+					os = null;
+				}
+				if(reader != null) {
+					reader.close();
+					reader = null;
+				}
+				if(errorReader != null) {
+					errorReader.close();
+					errorReader = null;
+				}
 			} catch (IOException ex) {
 				// swallow error
 			} finally {
-				process.destroy();
+				if(process != null) {
+					process.destroy();
+					process = null;
+				}
 			}
 		} finally {
-			process.destroy();
+			if(process != null) {
+				process.destroy();
+				process = null;
+			}
 		}
 	}
 

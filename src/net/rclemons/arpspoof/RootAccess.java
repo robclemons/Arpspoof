@@ -56,15 +56,19 @@ class RootAccess {
 			try {
 				if (os != null) {
 					os.close();
+					os = null;
 				}
 				if (osRes != null) {
 					osRes.close();
+					osRes = null;
 				}
 			} catch (IOException e) {
 				// swallow error
 			} finally {
-				if (process != null)
+				if (process != null) {
 					process.destroy();
+					process = null;
+				}
 			}
 		}
 		return hasRoot;
