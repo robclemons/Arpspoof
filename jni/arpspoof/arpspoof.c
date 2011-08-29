@@ -226,7 +226,7 @@ main(int argc, char *argv[])
 		arp_send(l, ARPOP_REPLY, NULL, spoof_ip,
 			 (target_ip ? (u_int8_t *)&target_mac : NULL),
 			 target_ip);
-		sleep(2);
+		sleep(1);
 	}
 	/* NOTREACHED */
 	
