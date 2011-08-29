@@ -42,7 +42,7 @@
 
 #ifdef BSD
 int
-arp_cache_lookup(in_addr_t ip, struct ether_addr *ether)
+arp_cache_lookup(in_addr_t ip, struct ether_addr *ether, const char* linf)
 {
 	int mib[6];
 	size_t len;
@@ -94,7 +94,7 @@ arp_cache_lookup(in_addr_t ip, struct ether_addr *ether)
 #endif
 
 int
-arp_cache_lookup(in_addr_t ip, struct ether_addr *ether)
+arp_cache_lookup(in_addr_t ip, struct ether_addr *ether, const char* lif)
 {
 	int sock;
 	struct arpreq ar;
@@ -102,7 +102,7 @@ arp_cache_lookup(in_addr_t ip, struct ether_addr *ether)
 	
 	memset((char *)&ar, 0, sizeof(ar));
 #ifdef __linux__
-	strncpy(ar.arp_dev, "eth0", sizeof(ar.arp_dev));   /* XXX - *sigh* */
+	strncpy(ar.arp_dev, lif, strlen(lif));
 #endif
 	sin = (struct sockaddr_in *)&ar.arp_pa;
 	sin->sin_family = AF_INET;
