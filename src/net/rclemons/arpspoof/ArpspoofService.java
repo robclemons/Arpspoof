@@ -31,12 +31,13 @@ import android.util.Log;
 
 public class ArpspoofService extends IntentService {
 	
-
 	private static final String TAG = "ArpspoofService";
 	private static final int SHOW_SPOOFING = 1;
 	private volatile Thread myThread;
 	private static volatile WifiManager.WifiLock wifiLock;
 	private static volatile PowerManager.WakeLock wakeLock;
+	protected static volatile boolean isSpoofing = false;
+	
 	public ArpspoofService() {
 		super("ArpspoofService");
 	}
@@ -67,6 +68,7 @@ public class ArpspoofService extends IntentService {
 			Log.e(TAG, "error initializing arpspoof command", e);
 		}
 		myThread.setDaemon(true);
+		isSpoofing = true;
 		myThread.start();
 		try {
 			myThread.join();
@@ -75,10 +77,6 @@ public class ArpspoofService extends IntentService {
 		}
 		if(myThread != null)
 			myThread = null;
-		wifiLock.release();
-		wakeLock.release();
-		stopForeground(true);
-		SpoofingActivity.isSpoofing = false;
 	}
 
 	@Override
@@ -99,5 +97,9 @@ public class ArpspoofService extends IntentService {
 			myThread.interrupt();
 			myThread = null;
 		}
+		wifiLock.release();
+		wakeLock.release();
+		stopForeground(true);
+		isSpoofing = false;
 	}
 }

@@ -43,10 +43,9 @@ import android.content.Intent;
 public class SpoofingActivity extends Activity {
 	private static final String TAG = "SpoofingActivity";
 	private Bundle mBundle;
-	protected static volatile boolean isSpoofing = false;
 	private final String IPV4_FILEPATH = "/proc/sys/net/ipv4/ip_forward";
 	private final String IPV6_FILEPATH = "/proc/sys/net/ipv6/conf/all/forwarding";
-	private static ExecuteCommand tcpdumpCmd;
+	private static ExecuteCommand tcpdumpCmd = null;
 
 
 	@Override
@@ -110,7 +109,6 @@ public class SpoofingActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(v.getContext(), ArpspoofService.class);
 				stopService(intent);
-				stopTcpdump();
 				finish();
 			}
 		});        
@@ -119,13 +117,19 @@ public class SpoofingActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		if(!isSpoofing) {
+		if(!ArpspoofService.isSpoofing) {
 			Intent intent = new Intent(this, ArpspoofService.class);
 			intent.putExtras(mBundle);
 			startService(intent);
-			isSpoofing = true;
-			startTcpdump();
 		}
+		if(tcpdumpCmd == null)
+			startTcpdump();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		stopTcpdump();
 	}
 
 	private void startTcpdump() {
