@@ -95,8 +95,12 @@ arp_send(libnet_t *l, int op, u_int8_t *sha,
 			ether_ntoa((struct ether_addr *)sha));
 	}
 	retval = libnet_write(l);
-	if (retval)
-		fprintf(stderr, "%s", libnet_geterror(l));
+    char *libnetError = libnet_geterror(l);
+	if (strlen(libnetError) > 0) {
+		fprintf(stderr, "%s", libnetError);
+        exit(1);
+    }
+
 
 	libnet_clear_packet(l);
 
