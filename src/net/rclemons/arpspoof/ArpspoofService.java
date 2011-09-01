@@ -48,7 +48,12 @@ public class ArpspoofService extends IntentService {
 		String localBin = bundle.getString("localBin");
 		String gateway = bundle.getString("gateway");
 		String wifiInterface = bundle.getString("interface");
-		final String command = localBin + " -i " + wifiInterface + " " + gateway;
+		String target = bundle.getString("target");
+		if(target != null)
+			target = " -t " + target;
+		else
+			target = "";
+		final String command = localBin + " -i " + wifiInterface + target + " " + gateway;
 		Notification notification = new Notification(R.drawable.ic_stat_spoofing, "now spoofing: " + gateway, System.currentTimeMillis());
 		Intent launchActivity = new Intent(this, SpoofingActivity.class);
 		launchActivity.putExtras(bundle);

@@ -14,24 +14,32 @@ android:layout_alignParentBottom="true"
 android:layout_centerHorizontal="true"
 >
 </Button>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:fillViewport="true"
+    android:layout_above="@id/start"
+>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+>
 <TextView
 android:id="@+id/widget33"
 android:layout_width="wrap_content"
 android:layout_height="wrap_content"
 android:text="Host IP address(optional):"
 android:textSize="22sp"
-android:layout_alignParentTop="true"
-android:layout_alignParentLeft="true"
 >
 </TextView>
 <EditText
 android:id="@+id/gateway"
-android:contentDescription="Enter the ip address you want to spoof here"
+android:contentDescription="Enter the IP address you want to spoof here"
 android:layout_width="fill_parent"
 android:layout_height="wrap_content"
 android:textSize="18sp"
-android:layout_below="@+id/widget33"
-android:layout_alignParentLeft="true"
 >
 </EditText>
 <TextView
@@ -40,8 +48,51 @@ android:layout_width="wrap_content"
 android:layout_height="wrap_content"
 android:text="@string/howTo"
 android:textSize="18sp"
-android:layout_centerVertical="true"
-android:layout_centerHorizontal="true"
 >
 </TextView>
+<CheckBox
+android:id="@+id/advancedCB"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Show advanced settings"
+android:textSize="22sp"
+android:layout_centerHorizontal="true"
+>
+</CheckBox>
+<TextView 
+android:id="@+id/targetText"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Target IP(optional):"
+android:textSize="22sp"
+android:visibility="gone"
+/>
+<EditText
+android:id="@+id/target"
+android:contentDescription="Enter the target's IP"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:textSize="18sp"
+android:visibility="gone" />
+<TextView
+android:id="@+id/tcpdumpText"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Tcpdump filter expression(required):"
+android:textSize="22sp"
+android:visibility="gone"
+>
+</TextView>
+<EditText
+android:id="@+id/tcpdumpFilter"
+android:contentDescription="Enter the filter expression"
+android:text="@string/tcpdumpFilter"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:textSize="18sp"
+android:visibility="gone"
+>
+</EditText>
+</LinearLayout>
+</ScrollView>
 </RelativeLayout>

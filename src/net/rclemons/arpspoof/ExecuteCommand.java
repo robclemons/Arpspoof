@@ -32,7 +32,6 @@ class ExecuteCommand extends Thread
 	private final String command;
 	private Process process = null;
 	private BufferedReader reader = null;
-	private BufferedReader errorReader = null;
 	private DataOutputStream os = null;
 	private ListView outputLV = null;
 	private ArrayAdapter<String> outputAdapter = null;
@@ -41,9 +40,10 @@ class ExecuteCommand extends Thread
 
 	public ExecuteCommand(String cmd) throws IOException {
 		command = cmd;
-		process = Runtime.getRuntime().exec("su");
+		ProcessBuilder pb = new ProcessBuilder().command("su");
+		pb.redirectErrorStream(true);
+		process = pb.start();
 		reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 		os = new DataOutputStream(process.getOutputStream());
 	}
 	
@@ -105,11 +105,8 @@ class ExecuteCommand extends Thread
 		try {
 			os.writeBytes(command + '\n');
 			os.flush();
-			StreamGobbler errorGobbler = new StreamGobbler(errorReader);
 			StreamGobbler stdOutGobbler = new StreamGobbler(reader);
-			errorGobbler.setDaemon(true);
 			stdOutGobbler.setDaemon(true);
-			errorGobbler.start();
 			stdOutGobbler.start();
 			os.writeBytes("exit\n");
 			os.flush();
@@ -128,16 +125,12 @@ class ExecuteCommand extends Thread
 		} catch (InterruptedException e) {
 			try {
 				if(os != null) {
-					os.close();//key to killing executable and process
+					os.close();//key to killing arpspoof executable and process
 					os = null;
 				}
 				if(reader != null) {
 					reader.close();
 					reader = null;
-				}
-				if(errorReader != null) {
-					errorReader.close();
-					errorReader = null;
 				}
 			} catch (IOException ex) {
 				// swallow error

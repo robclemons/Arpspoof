@@ -138,9 +138,12 @@ public class SpoofingActivity extends Activity {
 		String localhost = Formatter.formatIpAddress(wManager.getConnectionInfo().getIpAddress());
 		ArrayAdapter<String> outputAdapter = new ArrayAdapter<String>(this, R.layout.list_item);
 		outputLV.setAdapter(outputAdapter);
+		String tcpdumpFilter = mBundle.getString("tcpdumpFilter");
+		tcpdumpFilter = tcpdumpFilter.replaceAll("localhost", localhost);
+		
 		try {
-			tcpdumpCmd = new ExecuteCommand(getFileStreamPath(Arpspoof.TCPDUMP).toString() + " not '(src host "
-					+ localhost + " or dst host " + localhost + " or arp)'", outputLV, outputAdapter);
+			tcpdumpCmd = new ExecuteCommand(getFileStreamPath(Arpspoof.TCPDUMP).toString() + " -l " + tcpdumpFilter,
+					outputLV, outputAdapter);
 		} catch (IOException e) {
 			Log.e(TAG, "error running tcpdump", e);
 		}

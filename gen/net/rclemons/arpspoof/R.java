@@ -15,19 +15,23 @@ public final class R {
         public static final int ic_stat_spoofing=0x7f020001;
     }
     public static final class id {
-        public static final int OutputLV=0x7f070007;
-        public static final int copy_exe=0x7f07000b;
-        public static final int forward_ipv4=0x7f070008;
-        public static final int forward_ipv6=0x7f070009;
+        public static final int OutputLV=0x7f07000b;
+        public static final int advancedCB=0x7f070005;
+        public static final int copy_exe=0x7f07000f;
+        public static final int forward_ipv4=0x7f07000c;
+        public static final int forward_ipv6=0x7f07000d;
         public static final int gateway=0x7f070003;
         public static final int infotv=0x7f070004;
         public static final int start=0x7f070001;
-        public static final int stop=0x7f07000a;
+        public static final int stop=0x7f07000e;
+        public static final int target=0x7f070007;
         public static final int targetText=0x7f070006;
-        public static final int viewLicense=0x7f07000c;
+        public static final int tcpdumpFilter=0x7f070009;
+        public static final int tcpdumpText=0x7f070008;
+        public static final int viewLicense=0x7f070010;
         public static final int widget28=0x7f070000;
         public static final int widget33=0x7f070002;
-        public static final int widget35=0x7f070005;
+        public static final int widget35=0x7f07000a;
     }
     public static final class layout {
         public static final int list_item=0x7f030000;
@@ -43,10 +47,11 @@ public final class R {
         public static final int copying=0x7f040002;
     }
     public static final class string {
-        public static final int app_name=0x7f050004;
+        public static final int app_name=0x7f050005;
         public static final int copyExeTitle=0x7f050002;
         public static final int howTo=0x7f050003;
         public static final int rootError=0x7f050000;
         public static final int successfulInstall=0x7f050001;
+        public static final int tcpdumpFilter=0x7f050004;
     }
 }

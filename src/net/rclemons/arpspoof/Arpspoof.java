@@ -40,8 +40,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -94,6 +98,30 @@ public class Arpspoof extends Activity {
 				Log.w(TAG, "failed to commit version setting");
 		}
 		
+		/*Advanced settings that are only visible when advanced is checked*/
+		final TextView tcpdumpText = (TextView) findViewById(R.id.tcpdumpText);
+		final EditText tcpdumpEdit = (EditText) findViewById(R.id.tcpdumpFilter);
+		final TextView targetText = (TextView) findViewById(R.id.targetText);
+		final EditText target = (EditText) findViewById(R.id.target);
+		
+		final CheckBox advanced = (CheckBox) findViewById(R.id.advancedCB);
+		advanced.setChecked(false);
+		advanced.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton bv, boolean checked) {
+				if(checked) {
+					tcpdumpText.setVisibility(View.VISIBLE);
+					tcpdumpEdit.setVisibility(View.VISIBLE);
+					targetText.setVisibility(View.VISIBLE);
+					target.setVisibility(View.VISIBLE);
+				} else {
+					tcpdumpText.setVisibility(View.GONE);
+					tcpdumpEdit.setVisibility(View.GONE);
+					targetText.setVisibility(View.GONE);
+					target.setVisibility(View.GONE);
+				}
+			}
+		});
+		
 		/*Implements the Begin Spoofing button*/
 		final Button startButton = (Button) findViewById(R.id.start);
 		startButton.setOnClickListener(new OnClickListener() {
@@ -123,13 +151,20 @@ public class Arpspoof extends Activity {
 					} catch (SocketException e) {
 						Log.e(TAG, "error getting wifi network interface", e);
 					}
-					
 					Intent intent = new Intent(v.getContext(), SpoofingActivity.class);
 					//Add data necessary for running the program
 					Bundle mBundle = new Bundle();
 					mBundle.putString("gateway", gatewayIP);
 					mBundle.putString("localBin", getFileStreamPath(FILENAME).toString());
 					mBundle.putString("interface", interfaceName);
+					if(advanced.isChecked()) {
+						mBundle.putString("tcpdumpFilter", tcpdumpEdit.getText().toString());
+						String targetString = target.getText().toString();
+						if(!targetString.trim().equals(""))
+							mBundle.putString("target", targetString);
+					}
+					else
+						mBundle.putString("tcpdumpFilter", getResources().getString(R.string.tcpdumpFilter));
 					intent.putExtras(mBundle);
 					if(RootAccess.isGranted())
 						startActivity(intent);
